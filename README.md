@@ -76,7 +76,7 @@ Project layout
 - `controllers/postController.mjs` — controller logic: validation, rendering and redirects.
 - `models/blogspot.mjs` — Mongoose schema with a `url` virtual and an instance `getSummary()` method.
 - `views/` — EJS templates (`index.ejs`, `new.ejs`, `edit.ejs`, `detail.ejs`).
-- `public/js/posts.js` — client helper that submits forms with fetch and follows redirects.
+
 - `populate.mjs` — script to seed demo posts.
 
 Prerequisites
@@ -108,7 +108,7 @@ Routes (final simplified layout)
 Forms & client behavior
 
 - `new.ejs` and `edit.ejs` contain the full form markup and explicit action URLs so students can read and understand the HTML in one file.
-- The client-side script (`public/js/posts.js`) intercepts the form submit event, sends form data as `application/x-www-form-urlencoded` via `fetch`, and navigates to the redirected URL returned by the server.
+
 - Controllers validate inputs; on validation failure they return status 400 and re-render the same EJS view with an `errors` array and any previously entered `title`/`body` so the form shows the messages and keeps input.
 
 Populating demo content
