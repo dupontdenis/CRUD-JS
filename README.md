@@ -1,3 +1,79 @@
+## Why these routes are explicit (/:id/edit, /:id/update, /:id/delete)
+
+You might wonder why the router declares separate paths like:
+
+This small teaching project intentionally avoids the `method-override` middleware. Below is a brief explanation of why it's unnecessary here and how to switch if you want to use REST verbs.
+
+HTML forms only submit GET or POST. `method-override` is a middleware used to turn a POST into a PUT/DELETE on the server (usually by reading a hidden `_method` field or a query parameter).
+
+This project chooses explicit POST-backed update/delete routes for clarity and minimalism in a teaching context. `method-override` is useful for RESTful APIs, but it's intentionally omitted here to keep the example easy to read and reason about.
+
+If you'd like, I can add a short appendix showing the exact `method-override` setup and a sample form using `_method` so students can compare both approaches.
+
+Simple Express + Mongoose CRUD (EJS)
+
+A small, student-friendly CRUD demo using Express, Mongoose and EJS.
+
+Key points
+
+- Views are self-contained: `new.ejs` and `edit.ejs` contain the full form HTML (no partial form include).
+- We avoid browser PUT/DELETE form issues by using POST endpoints for update/delete. This keeps forms and fetch calls simple for learning.
+
+Project layout
+
+- `server.mjs` — starts Express, mounts the router at `/posts`, serves static assets and sets EJS as the view engine.
+- `routes/postRoutes.mjs` — defines the routes for list/create/read/update/delete (router mounted at `/posts`).
+- `controllers/postController.mjs` — controller logic: validation, rendering and redirects.
+- `models/blogspot.mjs` — Mongoose schema with a `url` virtual and an instance `getSummary()` method.
+- `views/` — EJS templates (`index.ejs`, `new.ejs`, `edit.ejs`, `detail.ejs`).
+- `public/js/posts.js` — client helper that submits forms with fetch and follows redirects.
+- `populate.mjs` — script to seed demo posts.
+
+Prerequisites
+
+- Node 18+ (ES modules enabled)
+- MongoDB running locally or a `MONGODB_URI` environment variable
+
+Install and run
+
+```bash
+npm install
+npm run dev   # starts server.mjs with nodemon
+# or
+npm start
+```
+
+Open http://localhost:3000/ — it redirects to `/posts/`.
+
+Routes (final simplified layout)
+
+- GET /posts/ — list all posts (renders `index.ejs`)
+- GET /posts/new — show create form (renders `new.ejs`)
+- POST /posts/new — create post
+- GET /posts/:id — show a single post (renders `detail.ejs`)
+- GET /posts/:id/edit — show edit form (renders `edit.ejs`)
+- POST /posts/:id/update — update post
+- POST /posts/:id/delete — delete post
+
+Forms & client behavior
+
+- `new.ejs` and `edit.ejs` contain the full form markup and explicit action URLs so students can read and understand the HTML in one file.
+
+- Controllers validate inputs; on validation failure they return status 400 and re-render the same EJS view with an `errors` array and any previously entered `title`/`body` so the form shows the messages and keeps input.
+
+Populating demo content
+
+```bash
+npm run populate
+```
+
+This clears the collection and seeds two example posts.
+
+Developer notes
+
+- If later you want true RESTful PUT/DELETE behavior for APIs, you can add `method-override` and change the routes back to use PUT/DELETE handlers; for teaching HTML forms and basic fetch usage the POST-based approach is easier.
+- The Mongoose model includes a `url` virtual returning `/posts/:id`; controllers and views use it where convenient.
+
 Why this project doesn't use `method-override`
 
 This small teaching project intentionally avoids the `method-override` middleware. Below is a brief explanation of why it's unnecessary here and how to switch if you want to use REST verbs.
