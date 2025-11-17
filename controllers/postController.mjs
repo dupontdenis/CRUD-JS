@@ -1,5 +1,23 @@
 import BlogPost from "../models/blogspot.mjs";
 
+// Reusable validation helper: trims inputs and returns sanitized values + errors
+function validatePostInput(titleInput, bodyInput, options = {}) {
+  const titleMax = options.titleMax ?? 10;
+  const bodyMax = options.bodyMax ?? 100;
+
+  const title = typeof titleInput === "string" ? titleInput.trim() : "";
+  const body = typeof bodyInput === "string" ? bodyInput.trim() : "";
+
+  const errors = [];
+  if (!title) errors.push("Title is required.");
+  if (!body) errors.push("Body is required.");
+  if (title && title.length > titleMax)
+    errors.push(`Title must be ${titleMax} characters or fewer.`);
+  if (body && body.length > bodyMax) errors.push("Body is too long.");
+
+  return { title, body, errors };
+}
+
 // Get all posts
 export const getAllPosts = async (req, res) => {
   try {
@@ -51,23 +69,13 @@ export const showNewPostForm = (req, res) => {
 export const createPost = async (req, res) => {
   try {
     // Pull and sanitize inputs
-    const rawTitle =
-      typeof req.body.title === "string" ? req.body.title.trim() : "";
-    const rawBody =
-      typeof req.body.body === "string" ? req.body.body.trim() : "";
-
-    const errors = [];
-
-    // Validation rules
-    if (!rawTitle) errors.push("Title is required.");
-    if (!rawBody) errors.push("Body is required.");
-    if (rawTitle && rawTitle.length > 10)
-      errors.push("Title must be 10 characters or fewer.");
-    if (rawBody && rawBody.length > 100) errors.push("Body is too long.");
+    const { title: rawTitle, body: rawBody, errors } = validatePostInput(
+      req.body.title,
+      req.body.body
+    );
 
     if (errors.length > 0) {
       // Render the form again with error messages and previously entered values.
-      // The view is self-contained, so only pass the values needed to prefill fields and show errors.
       return res.status(400).render("new", {
         errors,
         title: rawTitle,
@@ -122,16 +130,11 @@ export const showEditForm = async (req, res) => {
 // Handle edit submission (POST)
 export const updatePost = async (req, res) => {
   try {
-    const rawTitle =
-      typeof req.body.title === "string" ? req.body.title.trim() : "";
-    const rawBody =
-      typeof req.body.body === "string" ? req.body.body.trim() : "";
-
-    const errors = [];
-    if (!rawTitle) errors.push("Title is required.");
-    if (!rawBody) errors.push("Body is required.");
-    if (rawTitle && rawTitle.length > 200)
-      errors.push("Title must be 200 characters or fewer.");
+    // Use the shared validator so create/update share the same rules by default
+    const { title: rawTitle, body: rawBody, errors } = validatePostInput(
+      req.body.title,
+      req.body.body
+    );
 
     if (errors.length > 0) {
       // On validation error, re-render the edit view with errors and prefills.
