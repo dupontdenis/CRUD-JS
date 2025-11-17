@@ -61,9 +61,9 @@ export const createPost = async (req, res) => {
     // Validation rules
     if (!rawTitle) errors.push("Title is required.");
     if (!rawBody) errors.push("Body is required.");
-    if (rawTitle && rawTitle.length > 200)
+    if (rawTitle && rawTitle.length > 10)
       errors.push("Title must be 200 characters or fewer.");
-    if (rawBody && rawBody.length > 10000) errors.push("Body is too long.");
+    if (rawBody && rawBody.length > 100) errors.push("Body is too long.");
 
     if (errors.length > 0) {
       // Render the form again with error messages and previously entered values.
