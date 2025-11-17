@@ -69,10 +69,11 @@ export const showNewPostForm = (req, res) => {
 export const createPost = async (req, res) => {
   try {
     // Pull and sanitize inputs
-    const { title: rawTitle, body: rawBody, errors } = validatePostInput(
-      req.body.title,
-      req.body.body
-    );
+    const {
+      title: rawTitle,
+      body: rawBody,
+      errors,
+    } = validatePostInput(req.body.title, req.body.body);
 
     if (errors.length > 0) {
       // Render the form again with error messages and previously entered values.
@@ -131,10 +132,11 @@ export const showEditForm = async (req, res) => {
 export const updatePost = async (req, res) => {
   try {
     // Use the shared validator so create/update share the same rules by default
-    const { title: rawTitle, body: rawBody, errors } = validatePostInput(
-      req.body.title,
-      req.body.body
-    );
+    const {
+      title: rawTitle,
+      body: rawBody,
+      errors,
+    } = validatePostInput(req.body.title, req.body.body);
 
     if (errors.length > 0) {
       // On validation error, re-render the edit view with errors and prefills.
